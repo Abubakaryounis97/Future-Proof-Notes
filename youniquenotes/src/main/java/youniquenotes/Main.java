@@ -14,13 +14,13 @@ public class Main {
             String choice = scanner.nextLine().trim();
 
             switch (choice) {
-                case "1" -> createNote();
-                case "2" -> readNote();
-                case "3" -> updateNote();
-                case "4" -> deleteNote();
-                case "5" -> listNotes();
-                case "6" -> running = false;
-                default -> System.out.println("Invalid option. Please try again.");
+                case "1" : createNote();
+                case "2" : readNote();
+                case "3" : updateNote();
+                case "4" : deleteNote();
+                case "5" : listNotes();
+                case "6" : running = false;
+                default : System.out.println("Invalid option. Please try again.");
             }
         }
 
