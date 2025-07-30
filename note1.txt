@@ -1,0 +1,15 @@
+---
+id: note1
+title: Test Note
+author: Abubakar
+tags:
+- test
+- yaml
+- java
+created: '2025-07-30T15:03:18.597330'
+modified: '2025-07-30T15:03:18.597330'
+isDeleted: false
+---
+
+This is the body of the note.
+It supports multiple lines.

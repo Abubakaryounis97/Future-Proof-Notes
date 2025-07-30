@@ -1,0 +1,39 @@
+package youniquenotes;
+
+import java.util.Scanner;
+
+public class Main 
+{
+    private static final Scanner scanner = new Scanner(System.in);
+    private static final NoteManager manager = new NoteManager();
+
+    public static void main(String[] args) 
+    { 
+        System.out.println("Youniquenotes");
+        while (true) 
+        { 
+            String choice = scanner.nextLine().trim();
+
+
+            
+        }
+
+
+
+        
+    }
+
+    public static void menu()
+    {
+        
+        System.out.println("create => Create a new note (opens in default editor)");
+        System.out.println("list => List all notes ");
+        System.out.println("list --tag => List notes with specific tag ");
+        System.out.println("read => Display a specific note");
+        System.out.println("edit =>Edit a specific note ");
+        System.out.println("delete => Delete a specific note");
+        System.out.println("search =>Search notes for text (title, tags, content)");
+        System.out.println("stats  => Display statistics about your notes");
+    }
+
+}

@@ -1,0 +1,144 @@
+package youniquenotes;
+
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class NoteManager {
+
+    private static final Path NOTES_DIR = Paths.get("notes");
+    private Map<String, Note> notes = new HashMap<>();
+
+    public NoteManager() {
+        try {
+            if (!Files.exists(NOTES_DIR)) {
+                Files.createDirectories(NOTES_DIR);
+            }
+            loadAllNotes();
+        } catch (IOException e) {
+            System.err.println("Failed to initialize notes directory: " + e.getMessage());
+        }
+    }
+
+    // Create and save a new note
+    public Note createNote(String id, String title, List<String> tags, String author, String body) {
+        if (notes.containsKey(id)) {
+            throw new IllegalArgumentException("Note with id '" + id + "' already exists.");
+        }
+        Note note = new Note(id, title, tags, author, body, false);
+        notes.put(id, note);
+        saveNoteToFile(note);
+        return note;
+    }
+
+    // Get a note by ID (null if not found)
+    public Note getNote(String id) {
+        Note note = notes.get(id);
+        if (note == null || note.isDeleted()) return null;
+        return note;
+    }
+
+    // Update an existing note's fields; null means no change
+    public boolean updateNote(String id, String newTitle, String newBody, List<String> newTags) {
+        Note note = notes.get(id);
+        if (note == null || note.isDeleted()) return false;
+        if (newTitle != null) note.setTitle(newTitle);
+        if (newBody != null) note.setBody(newBody);
+        if (newTags != null) note.setTags(newTags);
+        saveNoteToFile(note);
+        return true;
+    }
+
+    // Mark note as deleted
+    public boolean deleteNote(String id) {
+        Note note = notes.get(id);
+        if (note == null || note.isDeleted()) return false;
+        note.setDeleted(true);
+        saveNoteToFile(note);
+        return true;
+    }
+
+    // List all active (non-deleted) notes
+    public List<Note> listNotes() {
+        return notes.values().stream()
+                .filter(n -> !n.isDeleted())
+                .collect(Collectors.toList());
+    }
+
+    // --- File I/O Methods ---
+
+    private void loadAllNotes() {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(NOTES_DIR, "*.txt")) {
+            for (Path file : stream) {
+                Note note = loadNoteFromFile(file);
+                if (note != null) {
+                    notes.put(note.getId(), note);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error loading notes: " + e.getMessage());
+        }
+    }
+
+    private Note loadNoteFromFile(Path path) {
+        try {
+            List<String> lines = Files.readAllLines(path);
+            if (lines.size() < 3 || !lines.get(0).equals("---")) {
+                System.err.println("Invalid format in file: " + path);
+                return null;
+            }
+
+            StringBuilder yamlContent = new StringBuilder();
+            StringBuilder bodyContent = new StringBuilder();
+            boolean inYaml = true;
+
+            for (int i = 1; i < lines.size(); i++) {
+                String line = lines.get(i);
+                if (line.equals("---")) {
+                    inYaml = false;
+                    continue;
+                }
+                if (inYaml) {
+                    yamlContent.append(line).append("\n");
+                } else {
+                    bodyContent.append(line).append("\n");
+                }
+            }
+
+            Yaml yaml = new Yaml();
+            Map<String, Object> data = yaml.load(yamlContent.toString());
+
+            String id = (String) data.get("id");
+            String title = (String) data.get("title");
+            String author = (String) data.get("author");
+            List<String> tags = Arrays.asList(((String) data.get("tags")).split("\\s*,\\s*"));
+            boolean deleted = Boolean.parseBoolean(data.get("deleted").toString());
+            String body = bodyContent.toString().trim();
+
+            return new Note(id, title, tags, author, body, deleted);
+
+        } catch (IOException e) {
+            System.err.println("Failed to read note from file: " + path + " - " + e.getMessage());
+            return null;
+        }
+    }
+
+    private void saveNoteToFile(Note note) {
+        Path filePath = NOTES_DIR.resolve(note.getId() + ".txt");
+
+        try (BufferedWriter writer = Files.newBufferedWriter(filePath)) {
+            writer.write("---\n");
+            writer.write("id: " + note.getId() + "\n");
+            writer.write("title: " + note.getTitle() + "\n");
+            writer.write("tags: " + String.join(", ", note.getTags()) + "\n");
+            writer.write("author: " + note.getAuthor() + "\n");
+            writer.write("deleted: " + note.isDeleted() + "\n");
+            writer.write("---\n\n");
+            writer.write(note.getBody());
+        } catch (IOException e) {
+            System.err.println("Failed to save note '" + note.getId() + "': " + e.getMessage());
+        }
+    }

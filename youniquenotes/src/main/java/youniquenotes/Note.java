@@ -1,8 +1,15 @@
 package youniquenotes;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
 
 public class Note {
     private String id;
@@ -16,7 +23,8 @@ public class Note {
     private boolean isDeleted;
 
      
-    public Note(String id, String title, List<String> tags, String author, String body) { // Constructor
+    public Note(String id, String title, List<String> tags, String author, String body, boolean deleted) 
+    { 
         this.id = id;
         this.title = title;
         this.tags = tags;
@@ -87,6 +95,52 @@ public class Note {
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
     }
+
+    public static Note fromFile(Path filePath) throws IOException {
+    String content = Files.readString(filePath);
+    String[] parts = content.split("---\\s*\n");
+
+    if (parts.length < 3) {
+        throw new IllegalArgumentException("Invalid note format.");
+    }
+
+    String yamlPart = parts[1];
+    String bodyPart = parts[2].trim();
+
+    Yaml yaml = new Yaml();
+    Map<String, Object> data = yaml.load(yamlPart);
+
+    Note note = new Note(
+        (String) data.get("id"),
+        (String) data.get("title"),
+        (List<String>) data.get("tags"),
+        (String) data.get("author"),
+        bodyPart,
+        (Boolean) data.get("isDeleted")
+    );
+
+    note.setFilepath(filePath);
+    // manually set timestamps if needed
+    note.setFilepath(filePath);
+
+    return note;
+}
+
+public String toYAML() {
+    Map<String, Object> data = new LinkedHashMap<>();
+    data.put("id", id);
+    data.put("title", title);
+    data.put("author", author);
+    data.put("tags", tags);
+    data.put("created", created.toString());
+    data.put("modified", modified.toString());
+    data.put("isDeleted", isDeleted);
+
+    DumperOptions options = new DumperOptions();
+    options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+    Yaml yaml = new Yaml(options);
+    return yaml.dump(data);
+}
         @Override
     public String toString() {
         return "Note{" +
