@@ -19,55 +19,73 @@ public class NoteManager {                                                      
         this.notes = new HashMap<>();
     }
 
-    public Note createNote(String id, String title, List<String> tags, String author, String body) {                    // creating a note 
+    public Note createNote(String id, String title, List<String> tags, String author) {                                 // creating a note 
         if (notes.containsKey(id)) {
             throw new IllegalArgumentException("note with this ID already exists.");                                   // checks if id already exists
         }
+
+        String body = "Title:";                                                                // setting a default body
+
         Note note = new Note(id, title, tags, author, body, false);                                             // creates a note object and saves it hashmap
         notes.put(id, note);
+
+        Path filePath = NOTES_DIR.resolve(id + ".txt");
+        try {
+
+            String content = "---\n" + note.toYAML() + "---\n\n" + body;                            // laod the Yaml heading and preloads the string
+            Files.writeString(filePath, content);
+
+
+            ProcessBuilder pb = new ProcessBuilder("nano", filePath.toString());        // class that lets me to run an external program in CLT like nano
+            pb.inheritIO();                                                                        // shares same screen as terminal and takes input and output from user
+            Process process = pb.start();                                                           // starts the nano process
+            process.waitFor();                                                                      // wait for user to finish updating or writing their file
+            note = Note.fromFile(filePath);
+             notes.put(id, note);                                                                       //// prases YAML and body to text from the text file saves as a note object
+    
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Error opening nano: " + e.getMessage());
+        }
         return note;
     }
 
     // reading an existing note with ID number
-    public Note readNote(String id) {
-        Path filePath = NOTES_DIR.resolve(id + ".txt");
+    public Note readNote(String id) {                                                                                   // returns a note object by searching by id parameter
+        Path filePath = NOTES_DIR.resolve(id + ".txt");                                                                 // build the path to the folder with the id number
         if (!Files.exists(filePath)) {
-            System.out.println("Note file does not exist: " + filePath);
+            System.out.println("Note file does not exist: " + filePath);                                                // checks if file actullay exists
             return null;
         }
 
         try {
-            return Note.fromFile(filePath);
+            return Note.fromFile(filePath);                                                                             // retunrs the file as a note object
         } catch (IOException | IllegalArgumentException e) {
-            System.err.println("Error reading note: " + e.getMessage());
+            System.err.println("Error reading note: " + e.getMessage());                                                // prevents crashing or any issues with the method
             return null;
         }
     }
 
     // updating a note
-    public boolean editNoteFromFile(String id, String newTitle, String newBody) {
-        Note note = readNote(id);
-        if (note == null) {
-            System.out.println("Note not found.");
-            return false;
-        }
-
-        // Update in-memory values
-        if (newTitle != null && !newTitle.trim().isEmpty()) {
-            note.setTitle(newTitle.trim());
-        }
-
-        if (newBody != null && !newBody.trim().isEmpty()) {
-            note.setBody(newBody.trim());
-        }
-
-        // Save updated note back to file
-        saveNoteToFile(note);
-        System.out.println("Note updated and saved to file.");
-        return true;
-    }
+    // public boolean editNoteFromFile(String id, String newTitle, String newBody) {
+    //     Note note = readNote(id);
+    //     if (note == null) {
+    //         System.out.println("Note not found.");
+    //         return false;
+    //     }
+    //     // Update in-memory values
+    //     if (newTitle != null && !newTitle.trim().isEmpty()) {
+    //         note.setTitle(newTitle.trim());
+    //     }
+    //     if (newBody != null && !newBody.trim().isEmpty()) {
+    //         note.setBody(newBody.trim());
+    //     }
+    //     // Save updated note back to file
+    //     saveNoteToFile(note);
+    //     System.out.println("Note updated and saved to file.");
+    //     return true;
+    // }
+    // better version of editong a note
     // deleting a note
-
     public boolean deleteNoteFile(String id) {
         Path filePath = NOTES_DIR.resolve(id + ".txt");
 

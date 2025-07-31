@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+
     public static void main(String[] args) {
         NoteManager manager = new NoteManager();
         Scanner scanner = new Scanner(System.in);
@@ -12,7 +13,7 @@ public class Main {
         manager.loadAllNotes(); // preload notes
 
         System.out.println("📓 Welcome to YouNique Notes Manager!");
-        
+
         while (true) {
             System.out.println("\nChoose an option:");
             System.out.println("1. Create Note");
@@ -39,15 +40,7 @@ public class Main {
                     String tagInput = scanner.nextLine();
                     List<String> tags = Arrays.asList(tagInput.split("\\s*,\\s*"));
 
-                    System.out.println("Enter body (end with a single '.' on a new line):");
-                    StringBuilder bodyBuilder = new StringBuilder();
-                    String line;
-                    while (!(line = scanner.nextLine()).equals(".")) {
-                        bodyBuilder.append(line).append("\n");
-                    }
-
-                    Note newNote = manager.createNote(id, title, tags, author, bodyBuilder.toString().trim());
-                    manager.saveNoteToFile(newNote);
+                    Note newNote = manager.createNote(id, title, tags, author);
                     System.out.println("✅ Note created and saved!");
                     break;
 
@@ -78,10 +71,10 @@ public class Main {
                     }
                     String newBody = newBodyBuilder.toString().trim();
 
-                    boolean updated = manager.editNoteFromFile(editId, newTitle, newBody.isEmpty() ? null : newBody);
-                    if (updated) {
-                        System.out.println("✅ Note updated.");
-                    }
+                    // boolean updated = manager.editNoteFromFile(editId, newTitle, newBody.isEmpty() ? null : newBody);
+                    // if (updated) {
+                    //     System.out.println("✅ Note updated.");
+                    // }
                     break;
 
                 case "4":
@@ -94,21 +87,21 @@ public class Main {
                     System.out.println("👋 Exiting. Goodbye!");
                     scanner.close();
                     return;
-                    case "10":
-        System.out.print("Enter search keyword: ");
-    String keyword = scanner.nextLine().trim();
-    manager.loadAllNotes(); // load all notes from disk into memory
-    List<Note> results = manager.search(keyword);
+                case "10":
+                    System.out.print("Enter search keyword: ");
+                    String keyword = scanner.nextLine().trim();
+                    manager.loadAllNotes(); // load all notes from disk into memory
+                    List<Note> results = manager.search(keyword);
 
-    if (results.isEmpty()) {
-        System.out.println("No matching notes found.");
-    } else {
-        System.out.println("Matching notes:");
-        for (Note note : results) {
-            System.out.println(note);
-        }
-    }
-    break;
+                    if (results.isEmpty()) {
+                        System.out.println("No matching notes found.");
+                    } else {
+                        System.out.println("Matching notes:");
+                        for (Note note : results) {
+                            System.out.println(note);
+                        }
+                    }
+                    break;
 
                 default:
                     System.out.println("❌ Invalid option. Try again.");
