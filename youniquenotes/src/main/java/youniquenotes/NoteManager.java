@@ -35,13 +35,13 @@ public class NoteManager {                                                      
             String content = "---\n" + note.toYAML() + "---\n\n" + body;                            // laod the Yaml heading and preloads the string
             Files.writeString(filePath, content);
 
-
             ProcessBuilder pb = new ProcessBuilder("nano", filePath.toString());        // class that lets me to run an external program in CLT like nano
             pb.inheritIO();                                                                        // shares same screen as terminal and takes input and output from user
             Process process = pb.start();                                                           // starts the nano process
             process.waitFor();                                                                      // wait for user to finish updating or writing their file
             note = Note.fromFile(filePath);
-             notes.put(id, note);                                                                       //// prases YAML and body to text from the text file saves as a note object
+            notes.put(id, note);
+         //// prases YAML and body to text from the text file saves as a note object
     
         } catch (IOException | InterruptedException e) {
             System.err.println("Error opening nano: " + e.getMessage());
@@ -85,6 +85,33 @@ public class NoteManager {                                                      
     //     return true;
     // }
     // better version of editong a note
+    public Note editNote(String id) {
+        Path filePath = NOTES_DIR.resolve(id + ".txt");
+
+        if (!Files.exists(filePath)) {
+            System.out.println("File doesn't exist: " + filePath);
+            return null;
+        }
+
+        try {
+            ProcessBuilder pb = new ProcessBuilder("nano", filePath.toString());
+            pb.inheritIO();
+            Process process = pb.start();
+            process.waitFor();
+
+            Note note = readNote(id);  // reuse your readNote method
+            if (note != null) {
+                notes.put(id, note);
+                System.out.println("Note edited and reloaded.");
+            }
+            return note;
+
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Error editing note: " + e.getMessage());
+            return null;
+        }
+    }
+
     // deleting a note
     public boolean deleteNoteFile(String id) {
         Path filePath = NOTES_DIR.resolve(id + ".txt");
