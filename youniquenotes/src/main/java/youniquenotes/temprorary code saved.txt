@@ -26,9 +26,9 @@ public class Main
     public static void menu()
     {
         
-        System.out.println("create => Create a new note (opens in default editor)");
+        System.out.println("create => Create a new note");
         System.out.println("list => List all notes ");
-        System.out.println("list --tag => List notes with specific tag ");
+        System.out.println("list --tag => List notes with specific tag "); // keep an eye for this its the only string that has two words maybe we can put an if conditions and then search for the tag 
         System.out.println("read => Display a specific note");
         System.out.println("edit =>Edit a specific note ");
         System.out.println("delete => Delete a specific note");

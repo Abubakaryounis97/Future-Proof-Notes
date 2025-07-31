@@ -1,0 +1,14 @@
+public List<Note> searchByTag(String tag) 
+{
+    List<Note> matchingNotes = new ArrayList<>(); 
+
+    for (Note note : notes.values()) {
+        if (!note.isDeleted() && note.getTags().contains(tag)) 
+        {
+            matchingNotes.add(note);
+        
+        }
+
+
+    return matchingNotes;
+}

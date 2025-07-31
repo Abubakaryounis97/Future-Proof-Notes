@@ -9,6 +9,7 @@ public class Main {
         NoteManager manager = new NoteManager();
         Scanner scanner = new Scanner(System.in);
         String input;
+        manager.loadAllNotes(); // preload notes
 
         System.out.println("📓 Welcome to YouNique Notes Manager!");
         
@@ -19,6 +20,7 @@ public class Main {
             System.out.println("3. Edit Note");
             System.out.println("4. Delete Note");
             System.out.println("5. Exit");
+            System.out.println("10. Search Notes by Keyword (all fields)");
             System.out.print("> ");
             input = scanner.nextLine();
 
@@ -92,6 +94,21 @@ public class Main {
                     System.out.println("👋 Exiting. Goodbye!");
                     scanner.close();
                     return;
+                    case "10":
+        System.out.print("Enter search keyword: ");
+    String keyword = scanner.nextLine().trim();
+    manager.loadAllNotes(); // load all notes from disk into memory
+    List<Note> results = manager.search(keyword);
+
+    if (results.isEmpty()) {
+        System.out.println("No matching notes found.");
+    } else {
+        System.out.println("Matching notes:");
+        for (Note note : results) {
+            System.out.println(note);
+        }
+    }
+    break;
 
                 default:
                     System.out.println("❌ Invalid option. Try again.");
