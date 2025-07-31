@@ -11,8 +11,34 @@ public class Main
     { 
         System.out.println("Youniquenotes");
         while (true) 
-        { 
-            String choice = scanner.nextLine().trim();
+        { menu();                                                                       // prints menu on terminal
+            System.out.println("Please select command:");                             // asks user to select command
+            String choice = scanner.nextLine().trim();                                  // declared variable choice as string
+
+            switch(choice.toLowerCase())
+            {
+                case"create":
+
+                break;
+                case"list":
+                break;
+                case"list --tag":
+                break;
+                case"read":
+                break;
+                case"edit":
+                break;
+                case"delete":
+                break;
+                case"search":
+                break;
+                case"stats":
+                break;
+               
+            
+            }
+
+            
 
 
             
@@ -34,6 +60,12 @@ public class Main
         System.out.println("delete => Delete a specific note");
         System.out.println("search =>Search notes for text (title, tags, content)");
         System.out.println("stats  => Display statistics about your notes");
+    }
+
+
+    public static void Create()
+    {
+        
     }
 
 }

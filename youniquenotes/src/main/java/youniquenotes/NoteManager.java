@@ -65,25 +65,7 @@ public class NoteManager {                                                      
         }
     }
 
-    // updating a note
-    // public boolean editNoteFromFile(String id, String newTitle, String newBody) {
-    //     Note note = readNote(id);
-    //     if (note == null) {
-    //         System.out.println("Note not found.");
-    //         return false;
-    //     }
-    //     // Update in-memory values
-    //     if (newTitle != null && !newTitle.trim().isEmpty()) {
-    //         note.setTitle(newTitle.trim());
-    //     }
-    //     if (newBody != null && !newBody.trim().isEmpty()) {
-    //         note.setBody(newBody.trim());
-    //     }
-    //     // Save updated note back to file
-    //     saveNoteToFile(note);
-    //     System.out.println("Note updated and saved to file.");
-    //     return true;
-    // }
+   
     // better version of editong a note
     public Note editNote(String id) {
         Path filePath = NOTES_DIR.resolve(id + ".txt");
@@ -156,18 +138,8 @@ public class NoteManager {                                                      
         }
         return matchingNotes;
     }
-    //     // search by author
-    // //public List<Note> searchByAuthor(String author) {
-    // List<Note> matchingNotes = new ArrayList<>();
-
-    // for (Note note : notes.values()) {
-    //     if (!note.isDeleted() && note.getAuthor().equalsIgnoreCase(author)) {
-    //         matchingNotes.add(note);
-    //     }
-    // }
-    // return matchingNotes;
-    // }
-    // better way is to create a search method by keyword which checks all the fields
+ 
+    // create a search method by keyword which checks all the fields
     public List<Note> search(String keyword) {
         List<Note> matchingNotes = new ArrayList<>();
         String keywordLower = keyword.toLowerCase();
@@ -196,6 +168,9 @@ public class NoteManager {                                                      
         }
         return matchingNotes;                                                                                   // return notes
     }
+
+
+    // loads all notes and lists them
 
     public void loadAllNotes() {
         if (!Files.exists(NOTES_DIR)) {                                                                         // check if notes directory exists
