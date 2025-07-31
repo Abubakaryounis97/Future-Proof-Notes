@@ -27,7 +27,7 @@ public class NoteManager {
     }
 
     // reading an existing note with ID number
-  public Note readNote(String id) {
+    public Note readNote(String id) {
     Path filePath = NOTES_DIR.resolve(id + ".txt");
     if (!Files.exists(filePath)) {
         System.out.println("Note file does not exist: " + filePath);

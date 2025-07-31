@@ -96,7 +96,8 @@ public class Note {
         isDeleted = deleted;
     }
 
-    public static Note fromFile(Path filePath) throws IOException {
+    public static Note fromFile(Path filePath) throws IOException 
+    {
     String content = Files.readString(filePath);
     String[] parts = content.split("---\\s*\n");
 
@@ -124,9 +125,10 @@ public class Note {
     note.setFilepath(filePath);
 
     return note;
-}
+    }
 
-public String toYAML() {
+public String toYAML() 
+    {
     Map<String, Object> data = new LinkedHashMap<>();
     data.put("id", id);
     data.put("title", title);
@@ -140,9 +142,10 @@ public String toYAML() {
     options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
     Yaml yaml = new Yaml(options);
     return yaml.dump(data);
-}
-        @Override
-    public String toString() {
+    }
+    @Override
+    public String toString() 
+    {
         return "Note{" +
                "id='" + id + '\'' +
                ", title='" + title + '\'' +
