@@ -5,171 +5,123 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    private static final Scanner scanner = new Scanner(System.in);
-    private static final NoteManager manager = new NoteManager();
+
+    private static Scanner scanner = new Scanner(System.in);
+    private static NoteManager manager = new NoteManager();
+    private static String input = "";
 
     public static void main(String[] args) {
-        manager.loadAllNotes();  // Load notes from disk at startup
-        System.out.println("📘 Welcome to Youniquenotes!");
-        printMenu();
+        System.out.println("Welcome to Youniquenotes!");
+
+        menu();
 
         while (true) {
-            System.out.print("\n> ");
-            String input = scanner.nextLine().trim();
 
-            if (input.equalsIgnoreCase("exit") || input.equalsIgnoreCase("quit")) {
-                System.out.println("👋 Exiting. Goodbye!");
-                break;
-            }
-
-            switch (input) {
-                case "menu":
-                    printMenu();
-                    break;
-
+            input = scanner.nextLine().trim();
+            switch (input.toLowerCase()) {
                 case "create":
-                    handleCreate();
+                    createFunction();
                     break;
-
                 case "list":
-                    handleListAll();
+                   listFunction();
                     break;
-
-                case "list --tag":
-                    handleListByTag();
+                // case "list --tag":
+                //     listTagsFunction();
                     break;
-
                 case "read":
-                    handleRead();
+                    readFunction();
                     break;
-
                 case "edit":
-                    handleEdit();
+                    editFunction();
                     break;
-
                 case "delete":
-                    handleDelete();
+                    deleteFunction();
                     break;
-
                 case "search":
-                    handleSearch();
+                    searchFunction();
                     break;
-
                 case "stats":
-                    handleStats();
+                    //statsFunction();
                     break;
-
                 default:
-                    System.out.println("Unknown command. Type `menu` to see available commands.");
+                    System.out.println("please try again, command not found!");
+                    menu();
+
             }
         }
+
     }
 
-    private static void printMenu() {
-        System.out.println("\n📋 Commands:");
-        System.out.println("  create       => Create a new note");
-        System.out.println("  list         => List all notes");
-        System.out.println("  list --tag   => List notes with specific tag");
-        System.out.println("  read         => Display a specific note");
-        System.out.println("  edit         => Edit a specific note");
-        System.out.println("  delete       => Delete a specific note");
-        System.out.println("  search       => Search notes by keyword");
-        System.out.println("  stats        => Display statistics about your notes");
-        System.out.println("  menu         => Show commands");
-        System.out.println("  exit         => Quit the application");
+    // printing a menu for user
+    public static void menu() {
+
+        System.out.println("create => Create a new note");
+        System.out.println("list => List all notes ");
+        System.out.println("list --tag => List notes with specific tag ");
+        System.out.println("read => Display a specific note");
+        System.out.println("edit =>Edit a specific note ");
+        System.out.println("delete => Delete a specific note");
+        System.out.println("search =>Search notes for text (title, tags, content)");
+        System.out.println("stats  => Display statistics about your notes");
     }
+    // create function
 
-    private static void handleCreate() {
-        System.out.print("Enter note ID: ");
-        String id = scanner.nextLine();
-
-        System.out.print("Enter title: ");
-        String title = scanner.nextLine();
-
-        System.out.print("Enter author: ");
-        String author = scanner.nextLine();
-
-        System.out.print("Enter tags (comma-separated): ");
+    private static void createFunction() {
+        System.out.println("Enter note ID:");
+        String id = scanner.nextLine().trim();
+        System.out.println("Enter note Title:");
+        String title = scanner.nextLine().trim();
+        System.out.println("Enter note Author:");
+        String author = scanner.nextLine().trim();
+        System.out.println("Enter note Tags ( separeted by comma):");
         String tagInput = scanner.nextLine();
         List<String> tags = Arrays.asList(tagInput.split("\\s*,\\s*"));
 
-        manager.createNote(id, title, tags, author);
-        System.out.println("✅ Note created and opened in nano!");
-    }
+        Note newNote = manager.createNote(id, title, tags, author);
 
-    private static void handleListAll() {
-        List<Note> notes = manager.listAllNotes();
-        if (notes.isEmpty()) {
-            System.out.println("No notes found.");
+        if (newNote == null) {
+            System.out.println("Note not created");
         } else {
-            System.out.println("📄 Notes:");
-            for (Note note : notes) {
-                System.out.printf("  - [%s] %s (%s)\n", note.getId(), note.getTitle(), note.getAuthor());
-            }
+            System.out.println("Note saved");
         }
     }
-
-    private static void handleListByTag() {
-        System.out.print("Enter tag: ");
-        String tag = scanner.nextLine().trim();
-        List<Note> notes = manager.searchByTag(tag);
-        if (notes.isEmpty()) {
-            System.out.println("No notes found with that tag.");
-        } else {
-            System.out.println("📌 Notes with tag '" + tag + "':");
-            for (Note note : notes) {
-                System.out.printf("  - [%s] %s (%s)\n", note.getId(), note.getTitle(), note.getAuthor());
-            }
+     // listFunction();
+        private static void listFunction(){
+            manager.loadAllNotes();
         }
-    }
-
-    private static void handleRead() {
-        System.out.print("Enter note ID: ");
-        String id = scanner.nextLine();
-        Note note = manager.readNote(id);
-        if (note != null) {
-            System.out.println("\n" + note);
+     //listTagsFunctions();
+      private static void listTagsFunction(){
+            System.out.println("Please enter tag:");
+            String tag= scanner.nextLine().trim();
+            manager.searchByTag(tag);
         }
+     //readFunction();
+     private static void  readFunction()
+     {
+          System.out.println("Please enter ID number:");
+          String id= scanner.nextLine().trim();
+          manager.readNote(id);
+     }
+
+    // editFunction();
+    private static void  editFunction(){
+        System.out.println("Please enter ID number:");
+        String id= scanner.nextLine().trim();
+          manager.editNote(id);
     }
+    //deleteFunction();
+    private static void deleteFunction(){
 
-    private static void handleEdit() {
-        System.out.print("Enter note ID: ");
-        String id = scanner.nextLine();
-        manager.editNote(id);
+        System.out.println("Please enter ID number:");
+        String id= scanner.nextLine().trim();
+          manager.deleteNoteFile(id);
+
     }
+    // searchFunction();
+    private static void  searchFunction(){
+          System.out.println("Please enter keyword:");
+        String keyword= scanner.nextLine().trim();
+          manager.search(keyword);
 
-    private static void handleDelete() {
-        System.out.print("Enter note ID to delete: ");
-        String id = scanner.nextLine();
-        boolean deleted = manager.deleteNoteFile(id);
-        if (deleted) {
-            System.out.println("🗑️ Note deleted.");
-        } else {
-            System.out.println("Failed to delete note.");
-        }
-    }
-
-    private static void handleSearch() {
-        System.out.print("Enter keyword: ");
-        String keyword = scanner.nextLine().trim();
-        List<Note> matches = manager.search(keyword);
-        if (matches.isEmpty()) {
-            System.out.println("No matching notes found.");
-        } else {
-            System.out.println("🔍 Found notes:");
-            for (Note note : matches) {
-                System.out.printf("  - [%s] %s (%s)\n", note.getId(), note.getTitle(), note.getAuthor());
-            }
-        }
-    }
-
-    private static void handleStats() {
-        List<Note> notes = manager.listAllNotes();
-        int total = notes.size();
-        int deleted = (int) notes.stream().filter(Note::isDeleted).count();
-
-        System.out.println("📊 Note Stats:");
-        System.out.println("  Total Notes: " + total);
-        System.out.println("  Deleted Notes: " + deleted);
     }
 }
