@@ -11,6 +11,7 @@ public class Main {
     private static String input = "";
 
     public static void main(String[] args) {
+        manager.loadAllNotes();
         System.out.println("Welcome to Youniquenotes!");
 
         menu();
@@ -23,10 +24,10 @@ public class Main {
                     createFunction();
                     break;
                 case "list":
-                   listFunction();
+                    listFunction();
                     break;
-                // case "list --tag":
-                //     listTagsFunction();
+                case "list --tag":
+                    listTagsFunction();
                     break;
                 case "read":
                     readFunction();
@@ -41,7 +42,7 @@ public class Main {
                     searchFunction();
                     break;
                 case "stats":
-                    //statsFunction();
+                    statsFunction();
                     break;
                 default:
                     System.out.println("please try again, command not found!");
@@ -77,51 +78,113 @@ public class Main {
         String tagInput = scanner.nextLine();
         List<String> tags = Arrays.asList(tagInput.split("\\s*,\\s*"));
 
+       try {
         Note newNote = manager.createNote(id, title, tags, author);
 
         if (newNote == null) {
-            System.out.println("Note not created");
+            System.out.println("Note not created.");
         } else {
-            System.out.println("Note saved");
+            System.out.println("Note saved.");
+        }
+    } catch (IllegalArgumentException e) {
+        System.out.println("Error: " + e.getMessage());
+        menu(); // re-display the menu after showing the error
+    }
+    }
+    // listFunction();
+
+    private static void listFunction() {
+        manager.loadAllNotes();
+        List<Note> allNotes = manager.listAllNotes();
+
+        if (allNotes.isEmpty()) {
+            System.out.println("No notes available.");
+        } else {
+            System.out.println("Listing all notes:");
+            for (Note note : allNotes) {
+                System.out.println("- ID: " + note.getId() + ", Title: " + note.getTitle());
+            }
+        }
+
+    }
+    //listTagsFunctions();
+
+    private static void listTagsFunction() {
+        System.out.println("Please enter tag:");
+        String tag = scanner.nextLine().trim();
+        List<Note> matchingNotes = manager.searchByTag(tag);
+
+        if (matchingNotes.isEmpty()) {
+            System.out.println("No notes found with tag: " + tag);
+        } else {
+            System.out.println("Notes with tag '" + tag + "':");
+            for (Note note : matchingNotes) {
+                System.out.println("- ID: " + note.getId() + ", Title: " + note.getTitle());
+            }
+        }
+
+    }
+    //readFunction();
+
+    private static void readFunction() {
+        System.out.println("Please enter ID number:");
+        String id = scanner.nextLine().trim();
+        Note note = manager.readNote(id);
+        if (note != null) {
+            System.out.println("\nNote details:\n" + note);
+            System.out.println("Body:\n" + note.getBody());
+        } else {
+            System.out.println("Note with ID '" + id + "' not found.");
         }
     }
-     // listFunction();
-        private static void listFunction(){
-            manager.loadAllNotes();
-        }
-     //listTagsFunctions();
-      private static void listTagsFunction(){
-            System.out.println("Please enter tag:");
-            String tag= scanner.nextLine().trim();
-            manager.searchByTag(tag);
-        }
-     //readFunction();
-     private static void  readFunction()
-     {
-          System.out.println("Please enter ID number:");
-          String id= scanner.nextLine().trim();
-          manager.readNote(id);
-     }
 
     // editFunction();
-    private static void  editFunction(){
+    private static void editFunction() {
         System.out.println("Please enter ID number:");
-        String id= scanner.nextLine().trim();
-          manager.editNote(id);
+        String id = scanner.nextLine().trim();
+        Note updatedNote = manager.editNote(id);
+        if (updatedNote != null) {
+            System.out.println("Note updated successfully!");
+            System.out.println(updatedNote);
+        } else {
+            System.out.println("Note with ID '" + id + "' not found or could not be edited.");
+        }
     }
+
     //deleteFunction();
-    private static void deleteFunction(){
-
+    private static void deleteFunction() {
         System.out.println("Please enter ID number:");
-        String id= scanner.nextLine().trim();
-          manager.deleteNoteFile(id);
+        String id = scanner.nextLine().trim();
+
+        boolean deleted = manager.deleteNoteFile(id);
+        if (deleted) {
+            System.out.println("Note with ID '" + id + "' deleted successfully.");
+        } else {
+            System.out.println("Note with ID '" + id + "' not found or could not be deleted.");
+        }
 
     }
+
     // searchFunction();
-    private static void  searchFunction(){
-          System.out.println("Please enter keyword:");
-        String keyword= scanner.nextLine().trim();
-          manager.search(keyword);
+    private static void searchFunction() {
+        System.out.println("Please enter keyword:");
+        String keyword = scanner.nextLine().trim();
+        List<Note> results = manager.search(keyword);
+
+        if (results.isEmpty()) {
+            System.out.println("No notes found matching keyword: " + keyword);
+        } else {
+            System.out.println("Found " + results.size() + " notes:");
+            for (Note note : results) {
+                System.out.println("- ID: " + note.getId() + ", Title: " + note.getTitle());
+            }
+        }
 
     }
+    //statsfunction
+    private static void  statsFunction()
+    {
+        manager.stats();
+    }
+
 }

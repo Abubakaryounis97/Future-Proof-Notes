@@ -7,8 +7,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class NoteManager {                                                                                              // decalsring notemanager class
 
@@ -20,16 +22,15 @@ public class NoteManager {                                                      
     }
 
     public Note createNote(String id, String title, List<String> tags, String author) {                                 // creating a note 
-        if (notes.containsKey(id)) {
-            throw new IllegalArgumentException("note with this ID already exists.");                                   // checks if id already exists
-        }
+        Path filePath = NOTES_DIR.resolve(id + ".txt");
 
+        if (notes.containsKey(id) || Files.exists(filePath)) {
+        throw new IllegalArgumentException("Note with this ID already exists.");
+    }
         String body = "Title:";                                                                // setting a default body
 
         Note note = new Note(id, title, tags, author, body, false);                                             // creates a note object and saves it hashmap
         notes.put(id, note);
-
-        Path filePath = NOTES_DIR.resolve(id + ".txt");
         try {
 
             String content = "---\n" + note.toYAML() + "---\n\n" + body;                            // laod the Yaml heading and preloads the string
@@ -195,4 +196,26 @@ public class NoteManager {                                                      
     public List<Note> listAllNotes() {
         return new ArrayList<>(notes.values());                                                                     // return all files loaded which can be used to list all items
     }
+
+    // Stats function
+    public void stats() {
+    int totalNotes = notes.size();
+    int totalWords = 0;
+    Set<String> uniqueTags = new HashSet<>();
+
+    for (Note note : notes.values()) {
+        // Count words in the body
+        if (note.getBody() != null && !note.getBody().isEmpty()) {
+            totalWords += note.getBody().split("\\s+").length;
+        }
+
+        // Collect unique tags
+        uniqueTags.addAll(note.getTags());
+    }
+
+    System.out.println("===== Simple Notes Stats =====");
+    System.out.println("Total notes: " + totalNotes);
+    System.out.println("Total words across all notes: " + totalWords);
+    System.out.println("Unique tags used: " + uniqueTags.size());
+}
 }
