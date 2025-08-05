@@ -1,0 +1,12 @@
+---
+id: '123456'
+title: demo
+author: younis
+tags:
+- java
+created: '2025-08-05T10:47:04.844678'
+modified: '2025-08-05T10:47:04.844678'
+isDeleted: false
+---
+
+Title : hfjaskhflahfh

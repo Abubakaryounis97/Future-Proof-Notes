@@ -15,41 +15,68 @@ public class Main {
         System.out.println("Welcome to Youniquenotes!");
 
         menu();
-
         while (true) {
+    input = scanner.nextLine().trim().toLowerCase();
+    switch (input) {
+        case "create":
+            do {
+                createFunction();
+            } while (askRepeat());
+            break;
 
-            input = scanner.nextLine().trim();
-            switch (input.toLowerCase()) {
-                case "create":
-                    createFunction();
-                    break;
-                case "list":
-                    listFunction();
-                    break;
-                case "list --tag":
-                    listTagsFunction();
-                    break;
-                case "read":
-                    readFunction();
-                    break;
-                case "edit":
-                    editFunction();
-                    break;
-                case "delete":
-                    deleteFunction();
-                    break;
-                case "search":
-                    searchFunction();
-                    break;
-                case "stats":
-                    statsFunction();
-                    break;
-                default:
-                    System.out.println("please try again, command not found!");
-                    menu();
+        case "list":
+            do {
+                listFunction();
+            } while (askRepeat());
+            break;
 
-            }
-        }
+        case "list --tag":
+            do {
+                listTagsFunction();
+            } while (askRepeat());
+            break;
+
+        case "read":
+            do {
+                readFunction();
+            } while (askRepeat());
+            break;
+
+        case "edit":
+            do {
+                editFunction();
+            } while (askRepeat());
+            break;
+
+        case "delete":
+            do {
+                deleteFunction();
+            } while (askRepeat());
+            break;
+
+        case "search":
+            do {
+                searchFunction();
+            } while (askRepeat());
+            break;
+
+        case "stats":
+            do {
+                statsFunction();
+            } while (askRepeat());
+            break;
+
+        case "exit":
+            System.out.println("Exiting program. Goodbye!");
+            return;
+
+        default:
+            System.out.println("Please try again, command not found!");
+            menu();
+    }
+}
+
+      
 
     }
 
@@ -64,6 +91,7 @@ public class Main {
         System.out.println("delete => Delete a specific note");
         System.out.println("search =>Search notes for text (title, tags, content)");
         System.out.println("stats  => Display statistics about your notes");
+        System.out.println("exit  => Leave the app");
     }
     // create function
 
@@ -186,5 +214,12 @@ public class Main {
     {
         manager.stats();
     }
+    // repeat function
+    private static boolean askRepeat() {
+    System.out.print("Repeat this function? (y): ");
+    String response = scanner.nextLine().trim().toLowerCase();
+    return response.equals("y");
+}
+
 
 }
